@@ -1,6 +1,10 @@
 class duplicity::packages {
   # Install the packages
   package {
-    ['duplicity', 'python-boto', 'gnupg']: ensure => present
+    ['python-boto', 'gnupg']: ensure => present
+  }
+
+  package { 'duplicity':
+    ensure => 0.6.24,
   }
 }
