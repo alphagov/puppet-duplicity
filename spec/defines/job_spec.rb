@@ -162,7 +162,26 @@ describe 'duplicity::job' do
 
     it "should be able to handle a specified remove-older-than time" do
       should contain_file(spoolfile) \
-        .with_content(/^duplicity .* && duplicity remove-older-than 7D.* --no-encryption --force.*/)
+        .with_content(%r{^duplicity .* --archive-dir ~/.cache/duplicity/ .*&& duplicity remove-older-than 7D .* --archive-dir ~/.cache/duplicity/ .*})
+    end
+  end
+
+  context "with defined remove-older-than and archive-dir" do
+    let(:params) {
+      {
+        :bucket            => 'somebucket',
+        :directory         => '/etc/',
+        :dest_id           => 'some_id',
+        :dest_key          => 'some_key',
+        :remove_older_than => '7D',
+        :spoolfile         => spoolfile,
+        :archive_directory => '/root/giraffe/neckbeard/',
+      }
+    }
+
+    it "should reference the same --archive-dir in both commands" do
+      should contain_file(spoolfile) \
+        .with_content(%r{^duplicity .* --archive-dir /root/giraffe/neckbeard/ .*&& duplicity remove-older-than 7D .* --archive-dir /root/giraffe/neckbeard/ .*})
     end
   end
 
