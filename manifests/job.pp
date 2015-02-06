@@ -165,6 +165,7 @@ define duplicity::job(
     exec { "duplicity-pgp-$title":
       command => "gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys $_keystr",
       path    => "/usr/bin:/usr/sbin:/bin",
+      user    => $user,
       unless  => "test $(gpg --with-colons --list-keys $_keystr | grep '^pub:' | wc -l) -eq $_numkeys"
     }
   }
