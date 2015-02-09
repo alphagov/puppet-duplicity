@@ -9,7 +9,7 @@ class duplicity::params(
   $hour                  = $duplicity::defaults::hour,
   $minute                = $duplicity::defaults::minute,
   $full_if_older_than    = $duplicity::defaults::full_if_older_than,
-  $remove_older_than     = undef,
+  $remove_all_but_n_full = undef,
   $job_spool = $duplicity::defaults::job_spool
 ) inherits duplicity::defaults {
 

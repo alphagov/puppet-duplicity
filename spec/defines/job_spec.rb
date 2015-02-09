@@ -147,33 +147,33 @@ describe 'duplicity::job' do
     end
   end
 
-  context "with defined remove-older-than" do
+  context "with defined remove-all-but-n-full" do
 
     let(:params) {
       {
-        :bucket             => 'somebucket',
-        :directory          => '/etc/',
-        :dest_id            => 'some_id',
-        :dest_key           => 'some_key',
-        :remove_older_than => '7D',
-        :spoolfile => spoolfile,
+        :bucket                => 'somebucket',
+        :directory             => '/etc/',
+        :dest_id               => 'some_id',
+        :dest_key              => 'some_key',
+        :remove_all_but_n_full => '2',
+        :spoolfile             => spoolfile,
       }
     }
 
-    it "should be able to handle a specified remove-older-than time" do
+    it "should be able to handle a specified remove-all-but-n-full time" do
       should contain_file(spoolfile) \
-        .with_content(%r{^duplicity .* --archive-dir ~/.cache/duplicity/ .*&& duplicity remove-older-than 7D .* --archive-dir ~/.cache/duplicity/ .*})
+        .with_content(%r{^duplicity .* --archive-dir ~/.cache/duplicity/ .*&& duplicity remove-all-but-n-full 2 .* --archive-dir ~/.cache/duplicity/ .*})
     end
   end
 
-  context "with defined remove-older-than and archive-dir" do
+  context "with defined remove-all-but-n-full and archive-dir" do
     let(:params) {
       {
         :bucket            => 'somebucket',
         :directory         => '/etc/',
         :dest_id           => 'some_id',
         :dest_key          => 'some_key',
-        :remove_older_than => '7D',
+        :remove_all_but_n_full => '7',
         :spoolfile         => spoolfile,
         :archive_directory => '/root/giraffe/neckbeard/',
       }
@@ -181,7 +181,7 @@ describe 'duplicity::job' do
 
     it "should reference the same --archive-dir in both commands" do
       should contain_file(spoolfile) \
-        .with_content(%r{^duplicity .* --archive-dir /root/giraffe/neckbeard/ .*&& duplicity remove-older-than 7D .* --archive-dir /root/giraffe/neckbeard/ .*})
+        .with_content(%r{^duplicity .* --archive-dir /root/giraffe/neckbeard/ .*&& duplicity remove-all-but-n-full 2 .* --archive-dir /root/giraffe/neckbeard/ .*})
     end
   end
 
@@ -377,12 +377,12 @@ describe 'duplicity::job' do
 
     let(:params) {
       {
-        :target            => 'ssh://someserver//some/dir',
-        :ssh_id            => '/etc/duplicity/id_rsa',
-        :cloud             => false,
-        :bucket            => false,
-        :directory         => '/root/mysqldump',
-        :remove_older_than => '1Y',
+        :target                => 'ssh://someserver//some/dir',
+        :ssh_id                => '/etc/duplicity/id_rsa',
+        :cloud                 => false,
+        :bucket                => false,
+        :directory             => '/root/mysqldump',
+        :remove_all_but_n_full => '1Y',
         :spoolfile => spoolfile,
       }
     }
@@ -391,7 +391,7 @@ describe 'duplicity::job' do
       should contain_file(spoolfile) \
       .with_content(/ssh:\/\/someserver\/\/some\/dir/)
       .with_content(/^duplicity .* --ssh-options -oIdentityFile=\'\/etc\/duplicity\/id_rsa\'/)
-      .with_content(/&& duplicity remove-older-than .* --ssh-options -oIdentityFile=\'\/etc\/duplicity\/id_rsa\'/)
+      .with_content(/&& duplicity remove-all-but-n-full .* --ssh-options -oIdentityFile=\'\/etc\/duplicity\/id_rsa\'/)
     end
   end
 end

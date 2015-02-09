@@ -14,7 +14,7 @@ define duplicity::job(
   $full_if_older_than = undef,
   $pre_command = undef,
   $post_command = undef,
-  $remove_older_than = undef,
+  $remove_all_but_n_full = undef,
   $archive_directory = '~/.cache/duplicity/',
 ) {
 
@@ -93,9 +93,9 @@ define duplicity::job(
     default => $post_command,
   }
 
-  $_remove_older_than = $remove_older_than ? {
-    undef   => $duplicity::params::remove_older_than,
-    default => $remove_older_than,
+  $_remove_all_but_n_full = $remove_all_but_n_full ? {
+    undef   => $duplicity::params::remove_all_but_n_full,
+    default => $remove_all_but_n_full,
   }
 
   $_ssh_options = $_ssh_id ? {
@@ -170,9 +170,9 @@ define duplicity::job(
     }
   }
 
-  $_remove_older_than_command = $_remove_older_than ? {
+  $_remove_all_but_n_full_command = $_remove_all_but_n_full ? {
     undef => '',
-    default => " && duplicity remove-older-than $_remove_older_than --verbosity warning --s3-use-new-style ${_encryption}${_ssh_options}--force --archive-dir ${archive_directory} $_url"
+    default => " && duplicity remove-all-but-n-full $_remove_all_but_n_full --verbosity warning --s3-use-new-style ${_encryption}${_ssh_options}--force --archive-dir ${archive_directory} $_url"
   }
 
   file { $spoolfile:
