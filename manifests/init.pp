@@ -15,7 +15,7 @@ define duplicity(
   $full_if_older_than = undef,
   $pre_command = undef,
   $post_command = undef,
-  $remove_older_than = undef,
+  $remove_all_but_n_full = undef,
   $archive_directory = undef,
 ) {
 
@@ -25,23 +25,23 @@ define duplicity(
   $spoolfile = "${duplicity::params::job_spool}/${name}.sh"
 
   duplicity::job { $name :
-    ensure             => $ensure,
-    spoolfile          => $spoolfile,
-    directory          => $directory,
-    target             => $target,
-    bucket             => $bucket,
-    dest_id            => $dest_id,
-    dest_key           => $dest_key,
-    folder             => $folder,
-    cloud              => $cloud,
-    user               => $user,
-    ssh_id             => $ssh_id,
-    pubkey_id          => $pubkey_id,
-    full_if_older_than => $full_if_older_than,
-    pre_command        => $pre_command,
-    post_command       => $post_command,
-    remove_older_than  => $remove_older_than,
-    archive_directory  => $archive_directory,
+    ensure                => $ensure,
+    spoolfile             => $spoolfile,
+    directory             => $directory,
+    target                => $target,
+    bucket                => $bucket,
+    dest_id               => $dest_id,
+    dest_key              => $dest_key,
+    folder                => $folder,
+    cloud                 => $cloud,
+    user                  => $user,
+    ssh_id                => $ssh_id,
+    pubkey_id             => $pubkey_id,
+    full_if_older_than    => $full_if_older_than,
+    pre_command           => $pre_command,
+    post_command          => $post_command,
+    remove_all_but_n_full => $remove_all_but_n_full,
+    archive_directory     => $archive_directory,
   }
 
   $_hour = $hour ? {
