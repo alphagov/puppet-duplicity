@@ -1,6 +1,7 @@
 define duplicity::monitored_job(
   $ensure = 'present',
   $directory = undef,
+  $target = undef,
   $bucket = undef,
   $dest_id = undef,
   $dest_key = undef,
@@ -11,7 +12,7 @@ define duplicity::monitored_job(
   $minute = undef,
   $full_if_older_than = undef,
   $pre_command = undef,
-  $remove_older_than = undef,
+  $remove_all_but_n_full = undef,
   $execution_timeout
 )
 {
@@ -24,6 +25,7 @@ define duplicity::monitored_job(
     ensure => $ensure,
     spoolfile => $spoolfile,
     directory => $directory,
+    target => $target,
     bucket => $bucket,
     dest_id => $dest_id,
     dest_key => $dest_key,
@@ -32,7 +34,7 @@ define duplicity::monitored_job(
     pubkey_id => $pubkey_id,
     full_if_older_than => $full_if_older_than,
     pre_command => $pre_command,
-    remove_older_than => $remove_older_than,
+    remove_all_but_n_full => $remove_all_but_n_full,
   }
 
   $_hour = $hour ? {

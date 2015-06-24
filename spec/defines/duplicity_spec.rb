@@ -40,6 +40,20 @@ describe 'duplicity', :type => :define do
       .with_user('root')
   end
 
+  context "non-root user" do
+    let(:params) {
+      {
+        :user      => 'devops',
+        :directory => '/etc/',
+      }
+    }
+
+    it 'should run the cron as the specified user' do
+      should contain_cron(title) \
+        .with_user('devops')
+    end
+  end
+
   context "with defined backup time" do
 
     let(:params) {

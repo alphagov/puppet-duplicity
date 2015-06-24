@@ -1,6 +1,16 @@
-class duplicity::packages {
+class duplicity::packages (
+  $version = 'present',
+  ) {
   # Install the packages
-  package {
-    ['duplicity', 'python-boto', 'gnupg']: ensure => present
+  package {[
+            'python-paramiko',
+            'python-gobject-2',
+            'python-boto',
+            'gnupg'
+            ]:
+          ensure => present
+  }
+  package {'duplicity':
+    ensure => $version,
   }
 }
