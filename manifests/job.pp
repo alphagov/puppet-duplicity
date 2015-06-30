@@ -68,6 +68,11 @@ define duplicity::job(
     default => $pubkey_id
   }
 
+  $_weekday = $weekday ? {
+    undef => $duplicity::params::weekday,
+    default => $weekday
+  }
+
   $_hour = $hour ? {
     undef => $duplicity::params::hour,
     default => $hour

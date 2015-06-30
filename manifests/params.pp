@@ -6,6 +6,7 @@ class duplicity::params(
   $cloud                 = $duplicity::defaults::cloud,
   $ssh_id                = undef,
   $pubkey_id             = undef,
+  $weekday               = $duplicity::defaults::weekday,
   $hour                  = $duplicity::defaults::hour,
   $minute                = $duplicity::defaults::minute,
   $full_if_older_than    = $duplicity::defaults::full_if_older_than,

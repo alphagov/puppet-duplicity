@@ -10,6 +10,7 @@ define duplicity(
   $user = 'root',
   $ssh_id = undef,
   $pubkey_id = undef,
+  $weekday = undef,
   $hour = undef,
   $minute = undef,
   $full_if_older_than = undef,
@@ -44,6 +45,11 @@ define duplicity(
     archive_directory     => $archive_directory,
   }
 
+  $_weekday = $weekday ? {
+    undef => $duplicity::params::weekday,
+    default => $weekday
+  }
+
   $_hour = $hour ? {
     undef => $duplicity::params::hour,
     default => $hour
@@ -60,6 +66,7 @@ define duplicity(
     user => $user,
     minute => $_minute,
     hour => $_hour,
+    weekday => $_weekday,
   }
 
   File[$spoolfile]->Cron[$name]
