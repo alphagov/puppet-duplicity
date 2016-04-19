@@ -3,7 +3,7 @@ set -e
 set -o pipefail
 
 <% @_environment.each do |var|-%>
-<%= var %>
+export <%= var %>
 <% end-%>
 <%= @_pre_command %>
 duplicity --verbosity warning --no-print-statistics --full-if-older-than <%= @_full_if_older_than -%> --s3-use-new-style <%= @_encryption -%><%= @_ssh_options -%><% _directories.each do |dir| %>--include '<%= dir -%>' <% end %>--exclude '**' --archive-dir <%= @archive_directory -%> / '<%= @_url -%>'<%= @_remove_all_but_n_full_command %>
