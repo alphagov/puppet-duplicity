@@ -34,15 +34,15 @@ For example: do a mysqldump before running duplicity.
 Removing Old Backups
 --------------------
 
-To remove old backups after a successful backup, you can use the ```remove_older_than``` parameter.
-For example: Remove backups older than 6 months:
+To remove old backups after a successful backup, you can use the ```remove_all_but_n_full``` parameter.
+For example: Remove backups older than the last 6 full ones:
 
     duplicity { 'my_backup':
       directory => '/root/db-backup',
       bucket => 'test-backup',
       dest_id => 'someid',
       dest_key => 'somekey',
-      remove_older_than => '6M',
+      remove_all_but_n_full => 6,
     }
 
 Global Parameters
@@ -58,7 +58,7 @@ Example:
         bucket => 'test-backup-soenke',
         dest_id => 'someid',
         dest_key => 'somekey',
-        remove_older_than => '6M',
+        remove_all_but_n_full => 6,
       }
     }
 
