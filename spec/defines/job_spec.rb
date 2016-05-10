@@ -181,7 +181,7 @@ describe 'duplicity::job' do
 
     it "should reference the same --archive-dir in both commands" do
       should contain_file(spoolfile) \
-        .with_content(%r{^duplicity .* --archive-dir /root/giraffe/neckbeard/ .*&& duplicity remove-all-but-n-full 2 .* --archive-dir /root/giraffe/neckbeard/ .*})
+        .with_content(%r{duplicity .* --archive-dir /root/giraffe/neckbeard/ .*&& duplicity remove-all-but-n-full 7 .* --archive-dir /root/giraffe/neckbeard/ .*})
     end
   end
 
