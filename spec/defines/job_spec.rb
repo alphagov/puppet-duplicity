@@ -288,8 +288,8 @@ describe 'duplicity::job' do
 
     it "should be able to set a global cloud key pair config" do
       should contain_file(spoolfile) \
-        .with_content(/^AWS_ACCESS_KEY_ID='some_id'$/)\
-        .with_content(/^AWS_SECRET_ACCESS_KEY='some_key'$/)\
+        .with_content(/AWS_ACCESS_KEY_ID='some_id'/)\
+        .with_content(/AWS_SECRET_ACCESS_KEY='some_key'/)\
         .with_content(/another_bucket/)
 
     end
