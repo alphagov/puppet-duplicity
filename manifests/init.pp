@@ -46,26 +46,26 @@ define duplicity(
   }
 
   $_weekday = $weekday ? {
-    undef => $duplicity::params::weekday,
+    undef   => $duplicity::params::weekday,
     default => $weekday
   }
 
   $_hour = $hour ? {
-    undef => $duplicity::params::hour,
+    undef   => $duplicity::params::hour,
     default => $hour
   }
 
   $_minute = $minute ? {
-    undef => $duplicity::params::minute,
+    undef   => $duplicity::params::minute,
     default => $minute
   }
 
   cron { $name :
-    ensure => $ensure,
+    ensure  => $ensure,
     command => $spoolfile,
-    user => $user,
-    minute => $_minute,
-    hour => $_hour,
+    user    => $user,
+    minute  => $_minute,
+    hour    => $_hour,
     weekday => $_weekday,
   }
 

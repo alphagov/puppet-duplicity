@@ -1,6 +1,6 @@
 define duplicity::job(
-  $ensure = 'present',
   $spoolfile,
+  $ensure = 'present',
   $directory = undef,
   $target = undef,
   $bucket = undef,
@@ -16,6 +16,9 @@ define duplicity::job(
   $post_command = undef,
   $remove_all_but_n_full = undef,
   $archive_directory = '~/.cache/duplicity/',
+  $weekday = undef,
+  $hour = undef,
+  $minute = undef,
 ) {
 
   include duplicity::params
@@ -90,7 +93,7 @@ define duplicity::job(
 
   $_pre_command = $pre_command ? {
     undef => '',
-    default => "$pre_command && "
+    default => "${pre_command} && "
   }
 
   $_post_command = $post_command ? {
@@ -105,7 +108,7 @@ define duplicity::job(
 
   $_ssh_options = $_ssh_id ? {
     undef => ' ',
-    default => " --ssh-options -oIdentityFile='$_ssh_id' "
+    default => " --ssh-options -oIdentityFile='${_ssh_id}' "
   }
 
   # convert the old cloud, bucket and target parameters into the new target parameter
@@ -114,9 +117,9 @@ define duplicity::job(
     warning('The cloud, bucket and folder parameters are deprecated. Please change your manifests to use the more general target parameter.')
 
     $_url = $_cloud ? {
-      'cf' => "cf+http://$_bucket",
-      's3' => "s3+http://$_bucket/$_folder/$name/",
-      'file' => "file://$_bucket"
+      'cf' => "cf+http://${_bucket}",
+      's3' => "s3+http://${_bucket}/${_folder}/${name}/",
+      'file' => "file://${_bucket}"
     }
   } else {
     $_url = $_target
@@ -145,8 +148,8 @@ define duplicity::job(
   $_scheme = regsubst($_url, '^([^:]*):.*$', '\1')
 
   $_environment = $_scheme ? {
-    'cf+http' => ["CLOUDFILES_USERNAME='$_dest_id'", "CLOUDFILES_APIKEY='$_dest_key'"],
-    /s3|s3\+http/ => ["AWS_ACCESS_KEY_ID='$_dest_id'", "AWS_SECRET_ACCESS_KEY='$_dest_key'"],
+    'cf+http' => ["CLOUDFILES_USERNAME='${_dest_id}'", "CLOUDFILES_APIKEY='${_dest_key}'"],
+    /s3|s3\+http/ => ["AWS_ACCESS_KEY_ID='${_dest_id}'", "AWS_SECRET_ACCESS_KEY='${_dest_key}'"],
     default => [],
   }
 
@@ -167,24 +170,24 @@ define duplicity::job(
     $_encryption = inline_template('--gpg-options \'--trust-model=always\' <% @_pubkeys.each do |key| %>--encrypt-key \'<%= key %>\' <% end %>')
     $_keystr = join([ "'", join($_pubkeys, "' '"), "'" ], '')
     $_numkeys = size($_pubkeys)
-    exec { "duplicity-pgp-$title":
-      command => "gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys $_keystr",
-      path    => "/usr/bin:/usr/sbin:/bin",
+    exec { "duplicity-pgp-${title}":
+      command => "gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys ${_keystr}",
+      path    => '/usr/bin:/usr/sbin:/bin',
       user    => $user,
-      unless  => "test $(gpg --with-colons --list-keys $_keystr | grep '^pub:' | wc -l) -eq $_numkeys"
+      unless  => "test $(gpg --with-colons --list-keys ${_keystr} | grep '^pub:' | wc -l) -eq ${_numkeys}"
     }
   }
 
   $_remove_all_but_n_full_command = $_remove_all_but_n_full ? {
     undef => '',
-    default => " && duplicity remove-all-but-n-full $_remove_all_but_n_full --verbosity warning --s3-use-new-style ${_encryption}${_ssh_options}--force --archive-dir ${archive_directory} $_url"
+    default => " && duplicity remove-all-but-n-full ${_remove_all_but_n_full} --verbosity warning --s3-use-new-style ${_encryption}${_ssh_options}--force --archive-dir ${archive_directory} ${_url}"
   }
 
   file { $spoolfile:
     ensure  => $ensure,
-    content => template("duplicity/file-backup.sh.erb"),
+    content => template('duplicity/file-backup.sh.erb'),
     owner   => $user,
-    mode    => 0700,
+    mode    => '0700',
   }
 
 }
