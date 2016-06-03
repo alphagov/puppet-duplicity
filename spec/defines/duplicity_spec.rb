@@ -32,7 +32,7 @@ describe 'duplicity', :type => :define do
   end
 
   it 'should create the spoolfile before adding the cron using it' do
-    should contain_file(spoolfile).with_before("Cron[#{title}]")
+    should contain_file(spoolfile).with_before(["Cron[#{title}]"].flatten)
   end
 
   it 'should run the cron as root because backups usually need full access' do
