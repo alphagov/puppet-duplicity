@@ -1,9 +1,16 @@
-rvm: 1.8.7
-
+---
+language: ruby
+sudo: false
+# Delete dependency locks for matrix builds.
+before_install: rm Gemfile.lock || true
+script: bundle exec rake
+rvm:
+  - 1.9.3
+  - 2.1.6
 env:
-  - PUPPET_VERSION=2.7.11
-
-# Only test commits to production branch and all pull requests
-branches:
-  only:
-    - master
+  - PUPPET_VERSION="~> 3.8.0"
+  - PUPPET_VERSION="~> 4.3.0"
+# Only notify for failed builds.
+notifications:
+  email:
+    on_success: never

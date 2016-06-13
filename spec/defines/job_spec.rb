@@ -79,9 +79,9 @@ describe 'duplicity::job' do
 
     it "adds a spoolfile which contains the generated backup script" do
       should contain_file(spoolfile) \
-        .with_content(/^CLOUDFILES_USERNAME='some_id'$/)\
-        .with_content(/^CLOUDFILES_APIKEY='some_key'$/)\
-        .with_content(/^duplicity --verbosity warning --no-print-statistics --full-if-older-than 30D --s3-use-new-style --no-encryption --include '\/etc\/' --exclude '\*\*' --archive-dir ~\/.cache\/duplicity\/ \/ 'cf\+http:\/\/somebucket'$/)
+        .with_content(/CLOUDFILES_USERNAME='some_id'/)\
+        .with_content(/CLOUDFILES_APIKEY='some_key'/)\
+        .with_content(/duplicity --verbosity warning --no-print-statistics --full-if-older-than 30D --s3-use-new-style --no-encryption --include '\/etc\/' --exclude '\*\*' --archive-dir ~\/.cache\/duplicity\/ \/ 'cf\+http:\/\/somebucket'/)
     end
   end
 
@@ -99,9 +99,9 @@ describe 'duplicity::job' do
 
     it "adds spoolfile which contains the generated backup script" do
       should contain_file(spoolfile) \
-        .with_content(/^AWS_ACCESS_KEY_ID='some_id'$/)\
-        .with_content(/^AWS_SECRET_ACCESS_KEY='some_key'$/)\
-        .with_content(/^duplicity --verbosity warning --no-print-statistics --full-if-older-than 30D --s3-use-new-style --no-encryption --include '\/etc\/' --exclude '\*\*' --archive-dir ~\/.cache\/duplicity\/ \/ 's3\+http:\/\/somebucket\/#{fqdn}\/some_backup_name\/'$/)
+        .with_content(/AWS_ACCESS_KEY_ID='some_id'/)\
+        .with_content(/AWS_SECRET_ACCESS_KEY='some_key'/)\
+        .with_content(/duplicity --verbosity warning --no-print-statistics --full-if-older-than 30D --s3-use-new-style --no-encryption --include '\/etc\/' --exclude '\*\*' --archive-dir ~\/.cache\/duplicity\/ \/ 's3\+http:\/\/somebucket\/#{fqdn}\/some_backup_name\/'/)
     end
 
 
@@ -181,7 +181,7 @@ describe 'duplicity::job' do
 
     it "should reference the same --archive-dir in both commands" do
       should contain_file(spoolfile) \
-        .with_content(%r{^duplicity .* --archive-dir /root/giraffe/neckbeard/ .*&& duplicity remove-all-but-n-full 2 .* --archive-dir /root/giraffe/neckbeard/ .*})
+        .with_content(%r{duplicity .* --archive-dir /root/giraffe/neckbeard/ .*&& duplicity remove-all-but-n-full 7 .* --archive-dir /root/giraffe/neckbeard/ .*})
     end
   end
 
@@ -288,8 +288,8 @@ describe 'duplicity::job' do
 
     it "should be able to set a global cloud key pair config" do
       should contain_file(spoolfile) \
-        .with_content(/^AWS_ACCESS_KEY_ID='some_id'$/)\
-        .with_content(/^AWS_SECRET_ACCESS_KEY='some_key'$/)\
+        .with_content(/AWS_ACCESS_KEY_ID='some_id'/)\
+        .with_content(/AWS_SECRET_ACCESS_KEY='some_key'/)\
         .with_content(/another_bucket/)
 
     end
