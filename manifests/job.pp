@@ -16,9 +16,6 @@ define duplicity::job(
   $post_command = undef,
   $remove_all_but_n_full = undef,
   $archive_directory = '~/.cache/duplicity/',
-  $weekday = undef,
-  $hour = undef,
-  $minute = undef,
 ) {
 
   include duplicity::params
@@ -69,21 +66,6 @@ define duplicity::job(
   $_pubkey_id = $pubkey_id ? {
     undef => $duplicity::params::pubkey_id,
     default => $pubkey_id
-  }
-
-  $_weekday = $weekday ? {
-    undef => $duplicity::params::weekday,
-    default => $weekday
-  }
-
-  $_hour = $hour ? {
-    undef => $duplicity::params::hour,
-    default => $hour
-  }
-
-  $_minute = $minute ? {
-    undef => $duplicity::params::minute,
-    default => $minute
   }
 
   $_full_if_older_than = $full_if_older_than ? {
