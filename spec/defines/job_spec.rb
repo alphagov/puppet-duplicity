@@ -182,6 +182,24 @@ describe 'duplicity::job' do
     end
   end
 
+  context "with s3_multipart_max_procs set to 4" do
+    let(:params) {
+      {
+        :bucket       => 'somebucket',
+        :directory    => '/etc/',
+        :dest_id  => 'some_id',
+        :dest_key => 'some_key',
+        :spoolfile => spoolfile,
+        :s3_multipart_max_procs => 4,
+      }
+    }
+
+    it "adds a spoolfile which contains --s3-multipart-max-procs=4" do
+      should contain_file(spoolfile) \
+        .with_content(/^duplicity --verbosity warning --no-print-statistics --full-if-older-than 30D --s3-use-new-style --s3-multipart-max-procs=4 --no-encryption --include '\/etc\/' --exclude '\*\*' --archive-dir ~\/.cache\/duplicity\/ \/ 's3\+http:\/\/somebucket\/#{fqdn}\/some_backup_name\/'$/)
+    end
+  end
+
   context "with defined force full-backup" do
 
     let(:params) {
@@ -274,6 +292,25 @@ describe 'duplicity::job' do
     it "should set s3_multipart_chunk_size to 250 in both files" do
       should contain_file(spoolfile) \
         .with_content(%r{duplicity .* --s3-multipart-chunk-size=250 .*&& duplicity remove-all-but-n-full 7 .* --s3-multipart-chunk-size=250 .*})
+    end
+  end
+
+  context "with defined remove-all-but-n-full and s3_multipart_max_procs set to 4" do
+    let(:params) {
+      {
+        :bucket            => 'somebucket',
+        :directory         => '/etc/',
+        :dest_id           => 'some_id',
+        :dest_key          => 'some_key',
+        :remove_all_but_n_full => '7',
+        :spoolfile         => spoolfile,
+        :s3_multipart_max_procs => 4,
+      }
+    }
+
+    it "should set s3_multipart_max_procs to 4 in both files" do
+      should contain_file(spoolfile) \
+        .with_content(%r{duplicity .* --s3-multipart-max-procs=4 .*&& duplicity remove-all-but-n-full 7 .* --s3-multipart-max-procs=4 .*})
     end
   end
 

@@ -20,6 +20,7 @@ define duplicity(
   $archive_directory = undef,
   $s3_use_multiprocessing = undef,
   $s3_multipart_chunk_size = undef,
+  $s3_multipart_max_procs = undef,
 ) {
 
   include duplicity::params
@@ -47,6 +48,7 @@ define duplicity(
     archive_directory       => $archive_directory,
     s3_use_multiprocessing  => $s3_use_multiprocessing,
     s3_multipart_chunk_size => $s3_multipart_chunk_size,
+    s3_multipart_max_procs  => $s3_multipart_max_procs,
   }
 
   $_weekday = $weekday ? {
