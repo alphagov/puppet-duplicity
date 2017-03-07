@@ -16,6 +16,8 @@ define duplicity::job(
   $post_command = undef,
   $remove_all_but_n_full = undef,
   $archive_directory = '~/.cache/duplicity/',
+  $s3_use_multiprocessing = undef,
+  $s3_multipart_chunk_size = undef,
 ) {
 
   include duplicity::params
@@ -93,6 +95,17 @@ define duplicity::job(
     default => " --ssh-options -oIdentityFile='${_ssh_id}' "
   }
 
+  $_s3_use_multiprocessing = $s3_use_multiprocessing ? {
+    undef => '',
+    false => '',
+    true  => '--s3-use-multiprocessing ',
+  }
+
+  $_s3_multipart_chunk_size = $s3_multipart_chunk_size ? {
+    undef => '',
+    default => "--s3-multipart-chunk-size=${s3_multipart_chunk_size} ",
+  }
+
   # convert the old cloud, bucket and target parameters into the new target parameter
   if (! $_target) {
 
@@ -162,7 +175,7 @@ define duplicity::job(
 
   $_remove_all_but_n_full_command = $_remove_all_but_n_full ? {
     undef => '',
-    default => " && duplicity remove-all-but-n-full ${_remove_all_but_n_full} --verbosity warning --s3-use-new-style ${_encryption}${_ssh_options}--force --archive-dir ${archive_directory} ${_url}"
+    default => " && duplicity remove-all-but-n-full ${_remove_all_but_n_full} --verbosity warning --s3-use-new-style ${_s3_use_multiprocessing}${_s3_multipart_chunk_size}${_encryption}${_ssh_options}--force --archive-dir ${archive_directory} ${_url}"
   }
 
   file { $spoolfile:

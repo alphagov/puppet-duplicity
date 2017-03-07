@@ -128,6 +128,60 @@ describe 'duplicity::job' do
     end
   end
 
+  context "with s3_use_multiprocessing set to true" do
+    let(:params) {
+      {
+        :bucket       => 'somebucket',
+        :directory    => '/etc/',
+        :dest_id  => 'some_id',
+        :dest_key => 'some_key',
+        :spoolfile => spoolfile,
+        :s3_use_multiprocessing => true,
+      }
+    }
+
+    it "adds a spoolfile which contains --s3-use-multiprocessing" do
+      should contain_file(spoolfile) \
+        .with_content(/^duplicity --verbosity warning --no-print-statistics --full-if-older-than 30D --s3-use-new-style --s3-use-multiprocessing --no-encryption --include '\/etc\/' --exclude '\*\*' --archive-dir ~\/.cache\/duplicity\/ \/ 's3\+http:\/\/somebucket\/#{fqdn}\/some_backup_name\/'$/)
+    end
+  end
+
+  context "with s3_use_multiprocessing set to false" do
+    let(:params) {
+      {
+        :bucket       => 'somebucket',
+        :directory    => '/etc/',
+        :dest_id  => 'some_id',
+        :dest_key => 'some_key',
+        :spoolfile => spoolfile,
+        :s3_use_multiprocessing => false,
+      }
+    }
+
+    it "adds a spoolfile which does not contain --s3-use-multiprocessing" do
+      should contain_file(spoolfile) \
+        .with_content(/^duplicity --verbosity warning --no-print-statistics --full-if-older-than 30D --s3-use-new-style --no-encryption --include '\/etc\/' --exclude '\*\*' --archive-dir ~\/.cache\/duplicity\/ \/ 's3\+http:\/\/somebucket\/#{fqdn}\/some_backup_name\/'$/)
+    end
+  end
+
+  context "with s3_multipart_chunk_size set to 100" do
+    let(:params) {
+      {
+        :bucket       => 'somebucket',
+        :directory    => '/etc/',
+        :dest_id  => 'some_id',
+        :dest_key => 'some_key',
+        :spoolfile => spoolfile,
+        :s3_multipart_chunk_size => 100,
+      }
+    }
+
+    it "adds a spoolfile which contains --s3-multipart-chunk-size=100" do
+      should contain_file(spoolfile) \
+        .with_content(/^duplicity --verbosity warning --no-print-statistics --full-if-older-than 30D --s3-use-new-style --s3-multipart-chunk-size=100 --no-encryption --include '\/etc\/' --exclude '\*\*' --archive-dir ~\/.cache\/duplicity\/ \/ 's3\+http:\/\/somebucket\/#{fqdn}\/some_backup_name\/'$/)
+    end
+  end
+
   context "with defined force full-backup" do
 
     let(:params) {
@@ -182,6 +236,44 @@ describe 'duplicity::job' do
     it "should reference the same --archive-dir in both commands" do
       should contain_file(spoolfile) \
         .with_content(%r{duplicity .* --archive-dir /root/giraffe/neckbeard/ .*&& duplicity remove-all-but-n-full 7 .* --archive-dir /root/giraffe/neckbeard/ .*})
+    end
+  end
+
+  context "with defined remove-all-but-n-full and s3_use_multiprocessing set to true" do
+    let(:params) {
+      {
+        :bucket            => 'somebucket',
+        :directory         => '/etc/',
+        :dest_id           => 'some_id',
+        :dest_key          => 'some_key',
+        :remove_all_but_n_full => '7',
+        :spoolfile         => spoolfile,
+        :s3_use_multiprocessing => true,
+      }
+    }
+
+    it "should enable s3_use_multiprocessing in both commands" do
+      should contain_file(spoolfile) \
+        .with_content(%r{duplicity .* --s3-use-multiprocessing .*&& duplicity remove-all-but-n-full 7 .* --s3-use-multiprocessing .*})
+    end
+  end
+
+  context "with defined remove-all-but-n-full and s3_multipart_chunk_size set to 250" do
+    let(:params) {
+      {
+        :bucket            => 'somebucket',
+        :directory         => '/etc/',
+        :dest_id           => 'some_id',
+        :dest_key          => 'some_key',
+        :remove_all_but_n_full => '7',
+        :spoolfile         => spoolfile,
+        :s3_multipart_chunk_size => 250,
+      }
+    }
+
+    it "should set s3_multipart_chunk_size to 250 in both files" do
+      should contain_file(spoolfile) \
+        .with_content(%r{duplicity .* --s3-multipart-chunk-size=250 .*&& duplicity remove-all-but-n-full 7 .* --s3-multipart-chunk-size=250 .*})
     end
   end
 
